@@ -7,10 +7,10 @@ LIBS = -lm
 all: omp madd-opt
 
 omp: omp.c
-	$(CC) $(CFLAGS) -o omp omp.c $(LIBS)
+	$(CC) $(CFLAGS) -o omp omp.c /home/tjk12/cop5522/Code/microtime.c $(LIBS)
 
 madd-opt: madd-opt.c
-	$(CC) $(CFLAGS) -o madd-opt madd-opt.c $(LIBS)
+	$(CC) $(CFLAGS) -o madd-opt madd-opt.c /home/tjk12/cop5522/Code/microtime.c $(LIBS)
 
 clean:
 	rm -f omp madd-opt *.o
