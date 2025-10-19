@@ -1,0 +1,25 @@
+Figure Caption:
+============================================================
+
+Strong and Weak Scaling Results for OpenMP Parallelization of OMP-Q.c
+
+Left Panel (Strong Scaling):
+- Fixed problem size: N = 100,000
+- System: cs-ssh (shared memory multicore system)
+- Compiler: GCC with -O3 -march=native -fopenmp
+- Schedule: static with chunk size 16
+- Maximum speedup: 3.18x with 1 threads
+- Each data point represents best of 3 runs
+
+Right Panel (Weak Scaling):
+- Problem size scales with threads: N = 1,000 × threads
+- System: cs-ssh (shared memory multicore system)
+- Compiler: GCC with -O3 -march=native -fopenmp
+- Schedule: static with chunk size 16
+- Average efficiency: 348.2%
+- Each data point represents best of 3 runs
+
+Reproduction Instructions:
+1. Compile: make
+2. Run scaling tests: bash run_scaling_tests.sh
+3. Generate plots: python3 plot_scaling.py
