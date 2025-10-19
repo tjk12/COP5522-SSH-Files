@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <microtime.h>
 #include <stdlib.h>
-#include <omp.h>
+#include <omp.h>  // Added for OpenMP
 
 int main(int argc, char **argv)
 {
+  
   int N, i, a, j;
   float *A=0, x;
   double t, time1, time2;
@@ -18,41 +19,31 @@ int main(int argc, char **argv)
   
   N = atoi(argv[1]);
   NThreads = atoi(argv[2]);
-  
-  // Set number of OpenMP threads
-  omp_set_num_threads(NThreads);
 
-  // Allocate memory with 64B alignment (cache line size)
-  // Each float is 4B, so 16 floats per cache line
-  A = (float *) aligned_alloc(64, N*sizeof(float));
-  
-  if(A==0)
-  {
+  // Allocate suitably aligned memory: cache line size 64B, float 4B, so align to 64B
+  if (posix_memalign((void **)&A, 64, N * sizeof(float)) != 0) {
     fprintf(stderr, "Memory allocation failed in file %s, line %d\n", __FILE__, __LINE__);
     exit(1);
   }
-
+  
   time1 = microtime();
 
   a = 2;
 
-  // Parallelize the outer loop
-  // Use static schedule with larger chunk size for better load balancing
-  // The work per iteration grows linearly (iteration i does i inner loop iterations)
-  // Larger chunks distribute work more evenly across threads
-  // Chunk size 256: balances overhead reduction with load distribution
-  // Still aligns well with cache (256 floats = 1KB, fits in L1)
-  #pragma omp parallel for schedule(dynamic, 256) private(j, x) reduction(+:a)
+  // Parallelize the outer loop with reduction on 'a' to maintain correctness
+  // Use guided schedule for load balancing (work per iteration ~O(i), so guided adapts chunk sizes)
+  // and to avoid false sharing (larger initial chunks reduce cache line conflicts)
+  #pragma omp parallel for num_threads(NThreads) reduction(+:a) private(x,j) schedule(guided)
   for(i=0; i < N; i++) 
-  { 
-    a += 2*i;
-    
-    for(j = 0; j < i; j++)
-    {
-      x = 1.0/(i+j+1.0);
-      A[i] = x + 1.0;
+    { 
+      a += 2*i;
+      for(j = 0; j < i; j++)
+	{
+	  x = 1.0/(i+j+1.0);
+	  A[i] = x + 1.0;
+	}
     }
-  }
+
   
   time2 = microtime();
   
