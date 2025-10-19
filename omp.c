@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <omp.h>
-#include "microtime.h" 
+#include "microtime.h" // Assuming microtime.h is in the same directory or in the include path
 
 int main(int argc, char **argv)
 {
@@ -23,7 +23,6 @@ int main(int argc, char **argv)
   omp_set_num_threads(NThreads);
 
   // Allocate memory for array A with 64-byte alignment to match cache line size.
-  // A cache line is 64 bytes, and a float is 4 bytes, so 16 floats fit in one cache line.
   A = (float *)aligned_alloc(64, N * sizeof(float));
 
   if (A == 0)
@@ -36,7 +35,7 @@ int main(int argc, char **argv)
 
   a = 2;
 
-  #pragma omp parallel for schedule(dynamic, 16) private(j, x) reduction(+:a)
+  #pragma omp parallel for schedule(guided, 16) private(j, x) reduction(+:a)
   for (i = 0; i < N; i++)
   {
     a += 2 * i;
@@ -57,3 +56,4 @@ int main(int argc, char **argv)
 
   return 0;
 }
+
