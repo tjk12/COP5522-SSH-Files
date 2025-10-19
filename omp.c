@@ -37,9 +37,12 @@ int main(int argc, char **argv)
   a = 2;
 
   // Parallelize the outer loop
-  // Use static schedule with chunk size 16 to avoid false sharing
-  // Cache line = 64B, float = 4B, so 16 floats per cache line
-  #pragma omp parallel for schedule(static, 16) private(j, x) reduction(+:a)
+  // Use static schedule with larger chunk size for better load balancing
+  // The work per iteration grows linearly (iteration i does i inner loop iterations)
+  // Larger chunks distribute work more evenly across threads
+  // Chunk size 256: balances overhead reduction with load distribution
+  // Still aligns well with cache (256 floats = 1KB, fits in L1)
+  #pragma omp parallel for schedule(static, 256) private(j, x) reduction(+:a)
   for(i=0; i < N; i++) 
   { 
     a += 2*i;
