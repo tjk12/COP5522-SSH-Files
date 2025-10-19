@@ -1,16 +1,11 @@
 CC = gcc
 # Path to microtime.h
-INCLUDE_PATH = -I/home/tjk12/cop5522/Code
 CFLAGS = -O3 -march=native -fopenmp -Wall $(INCLUDE_PATH)
 LIBS = -lm
 
 all: omp madd-opt
 
-omp: omp.c
-	$(CC) $(CFLAGS) -o omp omp.c /home/tjk12/cop5522/Code/microtime.c $(LIBS)
 
-madd-opt: madd-opt.c
-	$(CC) $(CFLAGS) -o madd-opt madd-opt.c /home/tjk12/cop5522/Code/microtime.c $(LIBS)
 
 clean:
 	rm -f omp madd-opt *.o
