@@ -30,10 +30,10 @@ int main(int argc, char **argv)
 
   a = 2;
 
-  // Parallelize the outer loop with reduction on 'a' to maintain correctness
-  // Use guided schedule for load balancing (work per iteration ~O(i), so guided adapts chunk sizes)
-  // and to avoid false sharing (larger initial chunks reduce cache line conflicts)
-  #pragma omp parallel for num_threads(NThreads) reduction(+:a) private(x,j) schedule(guided)
+  // Parallelize with collapse(2) to exploit parallelism in both loops, improving load balancing
+  // Use guided schedule on the collapsed loops for adaptive chunking
+  // Private variables ensure no false sharing or races
+  #pragma omp parallel for num_threads(NThreads) reduction(+:a) private(x) collapse(2) schedule(guided)
   for(i=0; i < N; i++) 
     { 
       a += 2*i;
