@@ -4,7 +4,7 @@ Figure Caption:
 Strong and Weak Scaling Results for OpenMP Parallelization of OMP-Q.c
 
 Left Panel (Strong Scaling):
-- Fixed problem size: N = 100,000
+- Fixed problem size: N = 10,000
 - System: cs-ssh (shared memory multicore system)
 - Compiler: GCC with -O3 -march=native -fopenmp
 - Schedule: static with chunk size 16
@@ -16,7 +16,7 @@ Right Panel (Weak Scaling):
 - System: cs-ssh (shared memory multicore system)
 - Compiler: GCC with -O3 -march=native -fopenmp
 - Schedule: static with chunk size 16
-- Average efficiency: 348.2%
+- Average efficiency: 387.9%
 - Each data point represents best of 3 runs
 
 Reproduction Instructions:

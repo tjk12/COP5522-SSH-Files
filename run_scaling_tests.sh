@@ -9,27 +9,18 @@ echo ""
 
 # Strong scaling: fixed problem size, varying threads
 N=100000
-echo "threads,time_us,speedup,efficiency" > strong_scaling.csv
+rm -f strong_scaling_raw.csv strong_scaling.csv
 
 for threads in 1 2 4 8 16
 do
     echo "Testing with $threads threads..."
-    # Run 3 times and take the best time
-    best_time=999999999
     
-    for run in 1 2 3
-    do
-        output=$(./omp $N $threads 2>&1)
-        time_val=$(echo "$output" | grep "Time =" | awk '{print $3}')
-        
-        # Compare and keep best time
-        if (( $(echo "$time_val < $best_time" | bc -l) )); then
-            best_time=$time_val
-        fi
-    done
+    # Run once (you can run 3 times and take best if you want)
+    output=$(./omp $N $threads 2>&1)
+    time_val=$(echo "$output" | grep "Time =" | awk '{print $3}')
     
-    echo "Best time for $threads threads: $best_time us"
-    echo "$threads,$best_time" >> strong_scaling_raw.csv
+    echo "Time for $threads threads: $time_val us"
+    echo "$threads,$time_val" >> strong_scaling_raw.csv
 done
 
 echo ""
@@ -38,17 +29,16 @@ echo ""
 
 # Calculate speedup and efficiency
 echo "Calculating speedup and efficiency..."
-baseline=$(head -2 strong_scaling_raw.csv | tail -1 | cut -d',' -f2)
+baseline=$(head -1 strong_scaling_raw.csv | cut -d',' -f2)
+echo "Baseline (1 thread): $baseline us"
 
 echo "threads,time_us,speedup,efficiency" > strong_scaling.csv
 while IFS=',' read -r threads time_val
 do
-    if [ "$threads" != "threads" ]; then
-        speedup=$(echo "scale=4; $baseline / $time_val" | bc)
-        efficiency=$(echo "scale=4; $speedup / $threads" | bc)
-        echo "$threads,$time_val,$speedup,$efficiency" >> strong_scaling.csv
-        echo "  $threads threads: Speedup=$speedup, Efficiency=$efficiency"
-    fi
+    speedup=$(echo "scale=4; $baseline / $time_val" | bc)
+    efficiency=$(echo "scale=4; $speedup / $threads" | bc)
+    echo "$threads,$time_val,$speedup,$efficiency" >> strong_scaling.csv
+    echo "  $threads threads: Time=$time_val us, Speedup=$speedup, Efficiency=$efficiency"
 done < strong_scaling_raw.csv
 
 echo ""
@@ -58,43 +48,31 @@ echo "=============================================="
 echo ""
 
 # Weak scaling: problem size scales with threads
-# N per thread = 1000, so N = 1000 * threads
-echo "threads,N,time_us,efficiency" > weak_scaling.csv
+rm -f weak_scaling_raw.csv weak_scaling.csv
 
 for threads in 1 2 4 8 16
 do
-    N=$((1000 * threads))
+    N=$((10000 * threads))
     echo "Testing with $threads threads (N=$N)..."
     
-    # Run 3 times and take the best time
-    best_time=999999999
+    output=$(./omp $N $threads 2>&1)
+    time_val=$(echo "$output" | grep "Time =" | awk '{print $3}')
     
-    for run in 1 2 3
-    do
-        output=$(./omp $N $threads 2>&1)
-        time_val=$(echo "$output" | grep "Time =" | awk '{print $3}')
-        
-        if (( $(echo "$time_val < $best_time" | bc -l) )); then
-            best_time=$time_val
-        fi
-    done
-    
-    echo "Best time for $threads threads: $best_time us"
-    echo "$threads,$N,$best_time" >> weak_scaling_raw.csv
+    echo "Time for $threads threads: $time_val us"
+    echo "$threads,$N,$time_val" >> weak_scaling_raw.csv
 done
 
 echo ""
 # Calculate weak scaling efficiency
-baseline=$(head -2 weak_scaling_raw.csv | tail -1 | awk -F',' '{print $3}')
+baseline=$(head -1 weak_scaling_raw.csv | awk -F',' '{print $3}')
+echo "Baseline (1 thread): $baseline us"
 
 echo "threads,N,time_us,efficiency" > weak_scaling.csv
 while IFS=',' read -r threads N time_val
 do
-    if [ "$threads" != "threads" ]; then
-        efficiency=$(echo "scale=4; $baseline / $time_val" | bc)
-        echo "$threads,$N,$time_val,$efficiency" >> weak_scaling.csv
-        echo "  $threads threads (N=$N): Time=$time_val us, Efficiency=$efficiency"
-    fi
+    efficiency=$(echo "scale=4; $baseline / $time_val" | bc)
+    echo "$threads,$N,$time_val,$efficiency" >> weak_scaling.csv
+    echo "  $threads threads (N=$N): Time=$time_val us, Efficiency=$efficiency"
 done < weak_scaling_raw.csv
 
 echo ""
