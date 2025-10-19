@@ -8,7 +8,7 @@ Left Panel (Strong Scaling):
 - System: cs-ssh (shared memory multicore system)
 - Compiler: GCC with -O3 -march=native -fopenmp
 - Schedule: static with chunk size 16
-- Maximum speedup: 3.18x with 1 threads
+- Maximum speedup: 1.00x with 1 threads
 - Each data point represents best of 3 runs
 
 Right Panel (Weak Scaling):
@@ -16,7 +16,7 @@ Right Panel (Weak Scaling):
 - System: cs-ssh (shared memory multicore system)
 - Compiler: GCC with -O3 -march=native -fopenmp
 - Schedule: static with chunk size 16
-- Average efficiency: 387.9%
+- Average efficiency: 31.3%
 - Each data point represents best of 3 runs
 
 Reproduction Instructions:

@@ -70,7 +70,7 @@ plt.show()
 
 # ========== Print Summary Statistics ==========
 print("\n" + "="*60)
-print("STRONG SCALING SUMMARY (N=10,000)")
+print("STRONG SCALING SUMMARY (N=1,000,000)")
 print("="*60)
 print(strong.to_string(index=False))
 print("\nMaximum Speedup: {:.2f}x with {} threads".format(
