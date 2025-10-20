@@ -3,12 +3,12 @@
 # Script to run scaling tests on cs-ssh and collect data
 # Run this after compiling with make
 
-echo "Running Strong Scaling Tests (Fixed N=1_000_000)"
+echo "Running Strong Scaling Tests (Fixed N=50_000)"
 echo "=============================================="
 echo ""
 
 # Strong scaling: fixed problem size, varying threads
-N=1000000
+=50000
 rm -f strong_scaling_raw.csv strong_scaling.csv
 
 for threads in 1 2 4 8 16
