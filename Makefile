@@ -5,13 +5,13 @@ LIBS = -lm
 # Default target
 all: omp madd-opt
 
-# Rule to create the 'omp' executable by linking its object file with microtime's object file
+# Rule for omp
 omp: omp.o microtime.o
 	$(CC) $(CFLAGS) -o omp omp.o microtime.o $(LIBS)
 
-# This is an implicit rule that 'make' understands, but being explicit for madd-opt
-madd-opt: madd-opt.o
-	$(CC) $(CFLAGS) -o madd-opt madd-opt.o $(LIBS)
+# Rule for madd-opt, now correctly linking microtime.o
+madd-opt: madd-opt.o microtime.o
+	$(CC) $(CFLAGS) -o madd-opt madd-opt.o microtime.o $(LIBS)
 
 # A pattern rule that tells 'make' how to compile any .c file into a .o (object) file.
 # The -c flag tells gcc to compile but not link.
@@ -31,3 +31,5 @@ test: all
 	./madd-opt 512
 	@echo ""
 	./madd-opt 1024
+
+
