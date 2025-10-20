@@ -50,8 +50,8 @@ int main(int argc, char **argv)
   time2 = microtime();
   
   t = time2-time1;
-  // Use %lld to print the long long int for 'a'
-  printf("\nTime = %g us\tN = %d\tNThreads = %d\n", t * 1e6, N, NThreads);
+  // Use %.0f to print microseconds as a whole number, preventing scientific notation
+  printf("\nTime = %.0f us\tN = %d\tNThreads = %d\n", t * 1e6, N, NThreads);
   printf("A[N/2] = %g\ta = %lld\n\n", (double) A[N/2], a);
 
   free(A);
