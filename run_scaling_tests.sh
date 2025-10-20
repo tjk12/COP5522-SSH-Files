@@ -8,7 +8,7 @@ echo "=============================================="
 echo ""
 
 # Strong scaling: fixed problem size, varying threads
-=50000
+N=50000
 rm -f strong_scaling_raw.csv strong_scaling.csv
 
 for threads in 1 2 4 8 16
